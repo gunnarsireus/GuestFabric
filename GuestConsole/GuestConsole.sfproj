@@ -2,7 +2,7 @@
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" InitialTargets=";ValidateMSBuildFiles">
   <Import Project="..\packages\Microsoft.VisualStudio.Azure.Fabric.MSBuild.1.6.6\build\Microsoft.VisualStudio.Azure.Fabric.Application.props" Condition="Exists('..\packages\Microsoft.VisualStudio.Azure.Fabric.MSBuild.1.6.6\build\Microsoft.VisualStudio.Azure.Fabric.Application.props')" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>6ec0a537-c1f5-42b3-8c9c-1ee99664f2c8</ProjectGuid>
+    <ProjectGuid>bc171ac0-464e-41b1-9d12-07817193ac61</ProjectGuid>
     <ProjectVersion>2.1</ProjectVersion>
     <MinToolsVersion>1.5</MinToolsVersion>
     <SupportedMSBuildNuGetPackageVersion>1.6.6</SupportedMSBuildNuGetPackageVersion>
@@ -29,16 +29,11 @@
     <None Include="Scripts\Deploy-FabricApplication.ps1" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ApplicationPackageRoot\Guest1Pkg\Code\GuestConsole.deps.json" />
-    <Content Include="ApplicationPackageRoot\Guest1Pkg\Code\GuestConsole.dll" />
-    <Content Include="ApplicationPackageRoot\Guest1Pkg\Code\GuestConsole.exe" />
-    <Content Include="ApplicationPackageRoot\Guest1Pkg\Code\GuestConsole.pdb" />
-    <Content Include="ApplicationPackageRoot\Guest1Pkg\Code\GuestConsole.runtimeconfig.dev.json" />
-    <Content Include="ApplicationPackageRoot\Guest1Pkg\Code\GuestConsole.runtimeconfig.json" />
-    <Content Include="ApplicationPackageRoot\Guest1Pkg\Code\hostfxr.dll" />
-    <Content Include="ApplicationPackageRoot\Guest1Pkg\Code\hostpolicy.dll" />
-    <Content Include="ApplicationPackageRoot\Guest1Pkg\Config\Settings.xml" />
-    <Content Include="ApplicationPackageRoot\Guest1Pkg\ServiceManifest.xml" />
+    <Content Include="..\..\GuestConsole\GuestConsole\bin\Release\netcoreapp2.0\publish\**\*.*">
+      <Link>ApplicationPackageRoot\GuestConsolePkg\Code\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+    <Content Include="ApplicationPackageRoot\GuestConsolePkg\Config\Settings.xml" />
+    <Content Include="ApplicationPackageRoot\GuestConsolePkg\ServiceManifest.xml" />
     <Content Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
