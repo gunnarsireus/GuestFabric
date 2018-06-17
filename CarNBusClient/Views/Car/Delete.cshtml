@@ -1,0 +1,87 @@
+@model CarNBusClient.Models.Car
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Do you really want to delete this car?</h3>
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.VIN)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.VIN)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.RegNr)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.RegNr)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ConvertSpeed)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ConvertSpeed)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.CreationTime)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CreationTime)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="CarId" />
+        <input type="submit" value="Delete" class="btn btn-default" id="deleteId" disabled /> |
+        <a onclick="unlockCar()" style="cursor: pointer;">Back to list</a>
+    </form>
+    <script type="text/javascript">
+        function unlockCar() {
+            var xmlhttp = new XMLHttpRequest();
+            var car = {};
+            car.carId = '@Model.CarId';
+            car.companyId = '@Model.CompanyId';
+            car.locked = false;
+            var json = JSON.stringify(car);
+            xmlhttp.open("PUT", localStorage.getItem("apiAddress") + "/api/write/car/locked/" + '@Model.CarId', true);
+            xmlhttp.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+            xmlhttp.send(json);
+            window.location.href = '/Car/Index/' + '@Model.CompanyId';
+        }
+        (function () {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState === XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
+                    if (xmlhttp.status === 200) {
+                        let car = JSON.parse(xmlhttp.responseText);
+                        if (car.locked === true) {
+                            let element = document.getElementById("deleteId");
+                            element.removeAttribute("disabled");
+                        }
+                        else {
+                            xmlhttp.open("GET", localStorage.getItem("apiAddress") + "/api/read/car/" + '@Model.CarId', true);
+                            xmlhttp.send();
+                        }
+                    }
+                    else if (xmlhttp.status === 400) {
+                        alert('There was an error 400');
+                    }
+                    else {
+                        //alert('something else other than 200 was returned: ' + xmlhttp.status);
+                    }
+                }
+            };
+            if (localStorage.getItem("apiAddress") !== null) {
+                var carId = '@Model.CarId';
+                xmlhttp.open("GET", localStorage.getItem("apiAddress") + "/api/read/car/" + carId, true);
+                xmlhttp.send();
+            }
+        })();
+    </script>
+</div>

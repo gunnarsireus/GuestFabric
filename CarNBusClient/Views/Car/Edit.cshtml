@@ -1,0 +1,98 @@
+@model CarNBusClient.Models.Car
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h2>Edit bil f&#246;r @ViewBag.CompanyName</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="CarId" />
+            <input type="hidden" asp-for="CompanyId" />
+            <input type="hidden" asp-for="OldSpeed" />
+            <input type="hidden" asp-for="OldOnline" />
+            <div class="form-group">
+                <label asp-for="CreationTime" class="control-label"></label>
+                <input asp-for="CreationTime" class="form-control" disabled="disabled" />
+            </div>
+            <div class="form-group">
+                <label asp-for="VIN" class="control-label"></label>
+                <input asp-for="VIN" class="form-control" disabled="disabled" />
+            </div>
+            <div class="form-group">
+                <label asp-for="RegNr" class="control-label"></label>
+                <input asp-for="RegNr" class="form-control" disabled="disabled" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Speed" class="control-label"></label>
+                <input asp-for="Speed" class="form-control" />
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label asp-for="Online">
+                        <input asp-for="Online" />
+                        @Html.DisplayNameFor(m => m.OnlineOrOffline)
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <input id="saveId" type="submit" value="Save" class="btn btn-default" disabled />
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+        function unlockCar() {
+            var xmlhttp = new XMLHttpRequest();
+            var car = {};
+            car.carId = '@Model.CarId';
+            car.companyId = '@Model.CompanyId';
+            car.locked = false;
+            var json = JSON.stringify(car);
+            xmlhttp.open("PUT", localStorage.getItem("apiAddress") + "/api/write/car/locked/" + '@Model.CarId', true);
+            xmlhttp.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+            xmlhttp.send(json);
+            window.location.href = '/Car/Index/' + '@Model.CompanyId';
+        }
+    (function () {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
+                if (xmlhttp.status === 200) {
+                    let car = JSON.parse(xmlhttp.responseText);
+                    if (car.locked === true) {
+                        let element = document.getElementById("saveId");
+                        element.removeAttribute("disabled");
+                    }
+                    else {
+                        xmlhttp.open("GET", localStorage.getItem("apiAddress") + "/api/read/car/" + '@Model.CarId', true);
+                        xmlhttp.send();
+                    }
+                }
+                else if (xmlhttp.status === 400) {
+                    alert('There was an error 400');
+                }
+                else {
+                    //alert('something else other than 200 was returned: ' + xmlhttp.status);
+                }
+            }
+        };
+        if (localStorage.getItem("apiAddress") !== null) {
+            var carId = '@Model.CarId';
+            xmlhttp.open("GET", localStorage.getItem("apiAddress") + "/api/read/car/" + carId, true);
+            xmlhttp.send();
+        }
+    })();
+</script>
+<div>
+    <p>
+        <a onclick="unlockCar()" style="cursor: pointer;">Back to list</a>
+    </p>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
